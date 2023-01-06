@@ -1,0 +1,63 @@
+{% extends 'theme.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <title>Home</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+  <div class="container">
+  {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+            {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+  <div class="container text-center mt-3  ">
+    <h3>Register here</h3>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% if  form.errors  %}
+        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+            {{ form.password2.errors }}
+            {{ form.username.errors }}
+            {{ form.first_name.errors }}
+            {{ form.email.errors }}
+            {{ form.last_name.errors }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        {% endif %}
+
+
+        {% for field in form %}
+            <div>
+                <p>{{ field.label }}: <br> {{ field }}</p> 
+    
+                {% for error in field.errors %}
+                    <small style="color: red">{{ error }}</small>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Register</button>
+        <div class='p mt-1'> Already have account? <a href="{% url 'login' %}">Login here</a>
+    </form>
+    </div>
+
+   
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/popper.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script><script>
+  
+{% endblock script %}

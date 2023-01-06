@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  {% load static %}
+
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://kit.fontawesome.com/1d71f92e0a.js" crossorigin="anonymous"></script>
+
+
+<script>
+  function search() {
+    // Get the search term
+    var query = document.getElementById('search-input').value;
+
+    // Send an AJAX request to the server
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/search?q=' + query, true);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        // Update the search results
+        var results = JSON.parse(xhr.responseText).results;
+        var html = '';
+        for (var i = 0; i < results.length; i++) {
+          html += '<a href="' + results[i].profile_url + '">' + results[i].username + '</a>';
+        }
+        document.getElementById('search-results').innerHTML = html;
+      }
+    };
+    xhr.send();
+  }
+
+  document.getElementById('search-input').addEventListener('input', search);
+</script>
+
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.0.0/css/fontawesome.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <title>Social App</title>
+  </head>
+  <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+          <div class="container style="width: 100%;">
+
+          <a class="navbar-brand" href="/"> Social App</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto color">
+              <li class="nav-item active">
+                <a class="nav-link" href="/">
+                  <i class="fas fa-home"></i> Home
+                </a>
+              </li>
+              
+              <li class="nav-item active">
+                <a class="nav-link" href="{% url 'newsfeed' %}"> <i class="fas fa-rss"></i>Feed
+
+                </a>
+              </li>
+              
+            </ul>
+        
+                  
+                {% comment %} <span class="input-group-text" id="basic-addon1"></span> {% endcomment %}
+                
+
+                <form method="get" action="{% url 'search' %}">
+                  <input type="text" id="search-input" name="q" placeholder="Search username">
+
+                  <div class="dropdown">
+                    <div id="search-results-container" class="dropdown-menu">
+                      <ul id="search-results" class="list-unstyled"></ul>
+                    </div>
+                  </div>
+
+                </form>
+                
+                
+                
+
+
+            </div>
+
+              {% if user.is_authenticated %}
+              <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown" role="buton" aria-expanded="false"><i class="fas fa-user"> {{request.user}}</i></a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                  <li><a class="dropdown-item" href="">Help</a></li>
+                  <li><a class="dropdown-item" href="{% url 'logout' %}">Sign Out</a></li>
+                </ul>
+              </div>
+
+
+
+              {% endif %}
+            </div>
+          </div> </div>
+        </nav>
+
+    {% block content %}
+   
+    {% endblock %}
+    
+
+  {% block script %}
+    
+    
+  {% endblock script %}
+  </body>
+  <script>
+    function search() {
+      // Get the search term
+      var query = document.getElementById('search-input').value;
+    
+      // Show or hide the search results container
+      if (query) {
+        document.getElementById('search-results-container').style.display = 'block';
+      } else {
+        document.getElementById('search-results-container').style.display = 'none';
+      }
+    
+      // Send an AJAX request to the server
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/search?q=' + query, true);
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          // Update the search results
+          var results = JSON.parse(xhr.responseText).results;
+          var html = '';
+          for (var i = 0; i < results.length; i++) {
+            html += '<li><a href="' + results[i].profile_url + '">' + results[i].username + '</a></li>';
+          }
+          document.getElementById('search-results').innerHTML = html;
+        }
+      };
+      xhr.send();
+    }
+
+    
+    
+    // Add an event listener to the search input
+    document.getElementById('search-input').addEventListener('input', search);
+    </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+
+</html>

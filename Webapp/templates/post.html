@@ -1,0 +1,193 @@
+{% extends 'theme.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <title>Feed</title>
+    <!-- Include Bootstrap CSS -->
+    {% comment %} <link rel="stylesheet" href="{% static 'css/feedsstyle.css' %}" /> {% endcomment %}
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+		
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+   
+
+
+
+<section>
+
+<div class="container  align-items-stretch">
+    <!-- Page Content  -->
+    <div id="content" class="p-4 p-md-2 pt-5">
+      <h2 class="mb-1"></h2>
+
+      <div class="card" style="max-width: 50rem">
+        
+      
+        <div class="card-body">
+          <!-- Data -->
+          <div class="d-flex mb-3">
+            <a href="#">
+              <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
+                alt="Avatar" style="height: 40px" />
+            </a>
+            <div>
+              <a href="#" class="text-dark mb-0">
+                <strong>{{post.user}}</strong>
+              </a>
+              <a href="#" class="text-muted d-block" style="margin-top: -6px">
+                <small>{{post.created_date}}</small>
+              </a>
+            </div>
+          </div>
+          <!-- Description -->
+          <div>
+            <p>
+              {{post.post}}
+            </p>
+          </div>
+        </div>
+        <!-- Media -->
+        <div class="bg-image hover-overlay ripple rounded-0" data-mdb-ripple-color="light">
+          <img src='{{ post.image.url }} ' class="w-50 pl-5" />
+          <a href="#">
+            <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+          </a>
+        </div>
+        <!-- Media -->
+        <!-- Interactions -->
+        <div class="card-body">
+          <!-- Reactions -->
+          <div class="d-flex justify-content-between mb-3">
+            <div>
+              <a href="#">
+                <i class="fas fa-thumbs-up text-primary"></i>
+                <i class="fas fa-heart text-danger"></i>
+                <span>{{post.likes.count}}</span>
+              </a>
+            </div>
+            <div>
+              <a href="#" class="text-muted"> {{post.commentfield}} comments </a>
+            </div>
+          </div>
+          <!-- Reactions -->
+    
+          <!-- Buttons -->
+          <div class="d-flex justify-content-between text-center border-top border-bottom mb-4">
+            <button type="button" class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+              <i class="fas fa-thumbs-up me-2"></i>
+              
+              {% if user in post.likes.all %}
+              <a href="{% url 'unlike_post' post.pk %}">Unlike</a>
+          {% else %}
+              <a href="{% url 'like_post' post.pk %}">Like</a>
+          {% endif %}
+
+            </button>
+          
+            {% if post.user == user %}
+            <form method="post" action="{% url 'deletedetail' %}">
+
+            <a class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+              <i class="fas fa-trash me-2"></i>
+                {% csrf_token %}
+                {{ post.delete_form }}
+                <input class="btn btn-link btn-lg" type="submit" value="Delete">
+            </a>
+            </form>
+            {% endif %}
+            <a href='/post/{{post.id}}'
+            <button type="button" class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+              <i class="fas fa-comment me-2"></i>Comment
+            </button> </a>
+          </div>
+          <!-- Buttons -->
+    
+          <!-- Comments -->
+    
+          <!-- Input -->
+          <div class="d-flex mb-3">
+            <a href="#">
+              <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
+                alt="Avatar" style="height: 40px" />
+            </a>
+            <!-- add the comment box -->
+            <form method="post" action="{% url 'post' post.pk %}">
+              {% csrf_token %}
+                {{form.comment}}
+              <button type="submit" class="btn btn-primary">Add Comment</button>
+            </form>
+    </div>
+
+    <!-- comments -->
+    {% for comment in commentlist %}
+
+    <!--  comment -->
+    <div class="d-flex mb-3">
+      <a href="#">
+        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" class="border rounded-circle me-2"
+          alt="Avatar" style="height: 40px" />
+      </a>
+      <div>
+        <div class="bg-light rounded-3 px-3 py-1">
+          <a href="#" class="text-dark mb-0">
+            <strong> {{ comment.user }}</strong>
+          </a>
+          <a href="#" class="text-muted d-block">
+            <small> {{ comment.comment }}</small>
+          </a>
+          <a href="#" class="text-muted d-block" style="margin-top: -6px">
+            <small>{{comment.created_date}}</small>
+            <div>
+              <a href="#">
+                <i class="fas fa-thumbs-up text-primary "></i>
+                <span>{{ comment.like.count}}</span>
+              </a>
+            </div>
+
+        </div>
+
+        
+
+
+        <a href="#" class="text-muted small ms-3 me-2"><strong>
+          
+          {% if user in comment.like.all %}
+        <a href="{% url 'unlike_comment' comment.pk %}">Unlike</a>
+    {% else %}
+        <a href="{% url 'like_comment' comment.pk %}">Like</a>
+    {% endif %}
+
+        </strong></a>
+        <a href="#" class="text-muted small me-2"><strong>Reply</strong></a>
+      </div>
+    </div>
+    {% endfor %}
+
+
+  </div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+</section>
+
+{% endblock content %}
+{% block script %}
+
+
+<!-- Include Bootstrap JavaScript -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/popper.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+    
+{% endblock script %}
