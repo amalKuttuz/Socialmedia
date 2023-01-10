@@ -1,6 +1,7 @@
 {% extends 'theme.html' %}
 {% block content %}
 {% load static %}
+{% load bootstrap4 %}
 
 <head>
     <title>Home</title>
@@ -23,6 +24,7 @@
     <h3>Register here</h3>
     <form action="" method="POST">
         {% csrf_token %}
+
         {% if  form.errors  %}
         <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
             {{ form.password2.errors }}
@@ -37,15 +39,18 @@
         {% endif %}
 
 
-        {% for field in form %}
-            <div>
-                <p>{{ field.label }}: <br> {{ field }}</p> 
-    
-                {% for error in field.errors %}
-                    <small style="color: red">{{ error }}</small>
-                {% endfor %}
-            </div>
-        {% endfor %}
+        {% bootstrap_field form.username %}
+        {% bootstrap_field form.first_name %}
+        {% bootstrap_field form.last_name %}
+        {% bootstrap_field form.password1 %}
+        {% bootstrap_field form.password2 %}
+        {% bootstrap_field form.email %}
+
+
+
+
+
+
         <button class="btn btn-primary" type="submit">Register</button>
         <div class='p mt-1'> Already have account? <a href="{% url 'login' %}">Login here</a>
     </form>

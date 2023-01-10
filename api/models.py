@@ -43,3 +43,11 @@ class Profile(models.Model):
 
 def __str__(self):
         return f'Profile for user {self.user.username}'
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+models.signals.post_save.connect(create_user_profile, sender=User)
+
+

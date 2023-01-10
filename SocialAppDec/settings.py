@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'Webapp',
     'rest_framework.authtoken',
     'drf_yasg',
-
+    'bootstrap4',
     'api',
 ]
 
