@@ -3,7 +3,10 @@ import logging
 from django.http import HttpResponseServerError
 from django.http import HttpResponse
 from django.http import JsonResponse
-
+from django.db.models import F
+from django.shortcuts import HttpResponseRedirect
+from django.utils import timezone
+import random
 # Create your views here.
 from django.views.generic import CreateView,FormView,TemplateView,ListView
 from .forms import LoginForm,UserRegistrationForm,PostsForm,Posts,Commentform
@@ -65,7 +68,16 @@ def index(request):
     
 @login_required
 def profile(request):
+    posts_feed =Posts.objects.filter(user=request.user)[:10]
+    for post in posts_feed:
     
+      post.comments = Comments.objects.filter(post=post).order_by('-created_date')[:3]
+      post.commentcount=Comments.objects.filter(post=post).count
+      post.comment_form = Commentform()
+      post.postdeleteform = DeleteForm(initial={'post_id': post.id}) 
+    following = request.user.profile.following.all()
+    following_count = following.count()
+    posts_count =Posts.objects.filter(user=request.user).count
     if request.method == 'POST':
       # Get the forms from the request
       user_form = UserForm(request.POST, instance=request.user)
@@ -88,7 +100,7 @@ def profile(request):
       profileobjects=Profile.objects.filter(user_id=request.user)
     context = {
       'user_form': user_form,
-      'profile_form': profile_form,'profileobjects':profileobjects,'users':users
+      'profile_form': profile_form,'profileobjects':profileobjects,'users':users,'following_count':following_count,'posts_count':posts_count,'posts_feed':posts_feed
     }
     return render(request, 'profile.html', context)
 
@@ -96,8 +108,14 @@ def profile(request):
 
 @login_required
 def newsfeed(request):
-      # Get the latest posts
+  userlist = User.objects.exclude(pk=request.user.pk)
+  # select a random set of users
+  recommendations = random.sample(list(userlist), 5)
+    # Get the latest posts
   posts = Posts.objects.order_by('-created_date')[:10]
+        # Get the random users
+  users = User.objects.order_by('?')[:5]
+
 
   
   # Get the comments for each post
@@ -140,7 +158,7 @@ def newsfeed(request):
   addpostform=PostsForm()
 
   context = {
-        'posts': posts,'addpostform':addpostform }
+        'posts': posts,'addpostform':addpostform,'users': users,'recommendations':recommendations }
   return render(request, 'feed.html', context)
 
 
@@ -305,9 +323,10 @@ def delete_detail(request):
 def search(request):
   # Get the search term from the query string
   query = request.GET.get('q')
+  # users = User.objects.exclude(pk=request.user.pk)
 
   # Search for users with matching usernames
-  users = User.objects.filter(username__icontains=query)
+  users = User.objects.filter(username__icontains=query).exclude(username=request.user.username)
 
   # Build the search results as a list of dictionaries
   results = []
@@ -320,3 +339,24 @@ def search(request):
 
   # Return the search results as JSON
   return JsonResponse({'results': results})
+
+
+
+def delete_comment(request, pk):
+    # get the comment to be deleted
+    comment = get_object_or_404(Comments, pk=pk)
+    # check if the user who created the post is the same as the logged-in user
+        # delete the comment
+    comment.delete()
+    return redirect('newsfeed')
+ 
+    # postsexceptme = Posts.objects.exclude(user_id=request.user)
+
+
+def recommend_follow(request):
+    # get all users except the logged-in user
+    users = User.objects.exclude(pk=request.user.pk)
+    # select a random set of users
+    recommendations = random.sample(list(users), 5)
+    # render the template with the recommendations
+    return render(request, 'feed.html', {'recommendations': recommendations})

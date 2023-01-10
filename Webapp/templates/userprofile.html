@@ -11,8 +11,8 @@
 
 
     <section class="h-100  gradient-custom-2">
-        <div class="container py-5 h-100 ">
-          <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class=" py-5 h-100  ">
+          <div class="row d-flex justify-content-center align-items-center h-100 ">
             <div class="col col-lg-9 col-xl-7">
               <div class="card ">
                 <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
@@ -77,23 +77,183 @@
                     </div>
                   </div>
 
-                  <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div class="d-flex justify-content-between  mb-4">
+                    
+
+                  <div class="container">
                     <p class="lead fw-normal mb-0">Recent Posts</p>
                     <p class="mb-0"><a href="#!" class="text-muted">
                         
                     </a></p>
-                  </div>
-                  {% for posts_feed in posts_feed %}
-                  <div class="row g-2">
-                    <div class="col mb-2">
-                        <p class="lead fw-normal mb-0 align-content-start">{{posts_feed.post}}</p>
+                      {% for post in posts_feed %}
+                      
+      
+      
+                        <div class="card pl-1" style="max-width: 80rem">
+                                
+                              
+                                <div class="card-body">
+                                  <!-- Data -->
+                                  <div class="d-flex mb-3">
+                                    <a href="/viewprofile/{{ post.user }}">
+                                      <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
+                                        alt="Avatar" style="height: 40px" />
+                                    </a>
+                                    <div>
+                                      <a href="/viewprofile/{{ post.user }}" class="text-dark mb-0">
+                                        <strong>{{post.user}}</strong>
+                                      </a>
+                                      <a href="#" class="text-muted d-block" style="margin-top: -6px">
+                                        <small>{{post.created_date}}</small>
+                                      </a>
+                                    </div>
+                                  </div>
+                                  <!-- Description -->
+                                  <div>
+                                    <p>
+                                      {{post.post}}
+                                    </p>
+                                  </div>
+                                </div>
+                                <!-- Media -->
+                                <div class="bg-image hover-overlay ripple rounded-1" data-mdb-ripple-color="light">
+                                  <a href="/post/{{post.id}}">
+      
+                                  <img src='{{ post.image.url }} ' class="h-100 w-100  pl-3 pr-3 " />
+                                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                                  </a>
+                                </div>
+                                <!-- Media -->
+                                <!-- Interactions -->
+                                <div class="card-body">
+                                  <!-- Reactions -->
+                                  <div class="d-flex justify-content-between mb-3">
+                                    <div>
+                                      <a href="#">
+                                        <i class="fas fa-thumbs-up text-primary"></i>
+                                        <i class="fas fa-heart text-danger"></i>
+                                        <span>{{ post.likes.count }}</span>
+                                      </a>
+                                    </div>
+                                    <div>
+                                      <a href="/post/{{post.id}}" class="text-muted"> {{post.commentcount}} comments </a>
+                                    </div>
+                                  </div>
+                                  <!-- Reactions -->
+                            
+                                  <!-- Buttons -->
+                                  <div class="d-flex justify-content-between text-center border-top border-bottom mb-4">
+                                    <button type="button" class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+                                      <i class="fas fa-thumbs-up me-2"></i>
+      
+                                      {% if user in post.likes.all %}
+                                            <a href="{% url 'unlike_post' post.pk %}">Unlike</a>
+                                        {% else %}
+                                            <a href="{% url 'like_post' post.pk %}">Like</a>
+                                        {% endif %}
+      
+      
+                                    </button>
+                                    {% if post.user == user %}
+                                    <form method="post" action="{% url 'deletepost' %}">
+      
+                                    <a class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+                                      <i class="fas fa-trash me-2"></i>
+                                        {% csrf_token %}
+                                        {{ post.postdeleteform }}
+                                        <input class="btn btn-link btn-lg" type="submit" value="Delete">
+                                    </a>
+                                    </form>
+                                    {% endif %}
+      
+      
+      
+                                    <a href="/post/{{post.id}}" class="btn btn-link btn-lg" data-mdb-ripple-color="dark">
+                                      <i class="fas fa-comment me-2"></i>Comment
+                                    </a>
+                                  </div>
+                                  <!-- Buttons -->
+                            
+                                  <!-- Comments -->
+                            
+                                  <!-- Input -->
+                                  {% comment %} <div class="d-flex mb-3">
+                                   <a href="/viewprofile/{{ comment.user }}">
+                                      <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
+                                        alt="Avatar" style="height: 40px" />
+                                    </a> 
+                                  <div class="form-outline w-100">
+                                      <div class="card-footer">
+                                        <form method="post" action="{% url 'newsfeed' %}">
+                                          {% csrf_token %}
+                                          {{ post.comment_form.comment }}
+                                          <input type="hidden" name="form_type" value="comment">
+                                          <input type="hidden" name="post_id" value="{{ post.id }}">                   <button type="submit" class="btn btn-primary">Add Comment</button>
+                                        </form>
+                                      </div>                    <label class="form-label" for="textAreaExample">Write a comment</label>
+                                    </div> 
+                                  </div> {% endcomment %}
+                            </div>
+      
+                            <!-- comments -->
+                            {% for comment in post.comments %}
+      
+                            <!--  comment -->
+                            <div class="d-flex mb-3">
+                              <a href="#">
+                                <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" class="border rounded-circle me-2"
+                                  alt="Avatar" style="height: 40px" />
+                              </a>
+                              <div>
+                                <div class="bg-light rounded-3 px-3 py-1">
+                                  <a href="/viewprofile/{{ comment.user }}" class="text-dark mb-0">
+                                    <strong> {{ comment.user }}</strong>
+                                  </a>
+                                  <a href="#" class="text-muted d-block">
+                                    <small> {{ comment.comment }}</small>
+                                  </a>
+                                  <a href="#" class="text-muted d-block" style="margin-top: -6px">
+                                    <small>{{comment.created_date}}</small>
+                                    <div>
+                                      <a href="#">
+                                        <i class="fas fa-thumbs-up text-primary "></i>
+                                        <span>{{ comment.like.count}}</span>
+                                      </a>
+                                    </div>
+                                </div>
+                                
+                                <a href="#" class="text-muted small ms-3 me-2"><strong>
+                                  
+                                  {% if user in comment.like.all %}
+                                    <a href="{% url 'unlike_comment' comment.pk %}">Unlike</a>
+                                {% else %}
+                                    <a href="{% url 'like_comment' comment.pk %}">Like</a>
+                                {% endif %}
+      
+                                </strong></a>
+      
+                                <a href="#" class="text-muted small me-2"><strong>
+      
+      
+                                  {% if comment.user == user %}
+                                  <a href="{% url 'delete_comment' comment.pk %}"> Delete </a>
+                                        
+                                  {% endif %}
+      
+      
+                                </strong></a>
+                              </div>
+                            </div>
+                            {% endfor %}
+                          </div>
+      
+      
+      
+                                          
+                                        {% endfor %}
+                                  </div>
 
-                      <img src="{{posts_feed.image.url}}"
-                        alt="image 1" class="w-100 rounded-3">
-                    </div>
-                    
-                  </div>
-                  {% endfor %}
+
                 </div>
               </div>
             </div>

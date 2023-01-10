@@ -2,7 +2,6 @@
 {% extends 'theme.html' %}
 {% block content %}
 {% load static %}
-<section class="blog_section layout_padding">
 
 <head>
     <title>Feed</title>
@@ -17,25 +16,72 @@
 		<link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   </head>
-   
-  <div class="container-fluid d-flex">
-    <div class="row">
-      <div class="col-8 pl-2">
-      <h2 class="mb-1 mt-2 text-center"> <strong> Newsfeed </strong></h2>
+  
+ <div class="mt-4">
+        <div class=" d-flex justify-content-center">
+            <div class="col-9">
+                <div class="row">
+                    <div class="col-8">
 
-      {% for post in posts %}
+                        <!-- START OF STORIES -->
+                        <div class="card new-post">
+
+
+                          <div class="card shadow-0 ml-2 mr-2 mt-2 mb-2 ">
+                            <div class="card-body  pb-2 ">
+                              <div class="d-flex">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img (31).webp" class="rounded-circle"
+                                  height="50" alt="Avatar" loading="lazy" />
+                                <div class="d-flex align-items-center w-100 ps-3">
+                                  <div class="w-100">
+                                    <form method="post" action="{% url 'newsfeed' %}" enctype="multipart/form-data">
+                                      {% csrf_token %}
+                                      {{ addpostform.post }}
+                                      <input type="hidden" name="form_type" value="post">
+                                     
+                                    {% comment %} <input type="text" id="form143" class="form-control form-status border-0 py-1 px-0"
+                                      placeholder="What's happening" /> {% endcomment %}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="d-flex justify-content-between">
+                                <ul class="list-unstyled d-flex flex-row ps-3 pt-3" style="margin-left: 50px;">
+                                  <li>
+                                    <a href="">{{ addpostform.image }}<i class="far fa- pe-2"></i></a>
+                                  </li>
+                                  <li>
+                                    <a href=""><i class="fas fa-image px-2 pl-2"></i></a>
+                                  </li>
+                                 
+                                </ul>
+                                <div class="d-flex align-items-center">
+                                  <button type="submit" class="btn btn-primary btn-rounded"> Post</button>
+
+                                </div>
+                              </form>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                        <!-- END OF STORIES -->
+
+                        <!-- START OF POSTS -->
+                        <div class="d-flex flex-column mt-4 mb-4">
+
+                          {% for post in posts %}
       <div class="card pl-1" style="max-width: 80rem">
         
       
         <div class="card-body">
           <!-- Data -->
           <div class="d-flex mb-3">
-            <a href="#">
+            <a href="/viewprofile/{{ post.user }}">
               <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
                 alt="Avatar" style="height: 40px" />
             </a>
             <div>
-              <a href="#" class="text-dark mb-0">
+              <a href="/viewprofile/{{ post.user }}" class="text-dark mb-0">
                 <strong>{{post.user}}</strong>
               </a>
               <a href="#" class="text-muted d-block" style="margin-top: -6px">
@@ -71,7 +117,7 @@
               </a>
             </div>
             <div>
-              <a href="#" class="text-muted"> {{post.commentcount}} comments </a>
+              <a href="/post/{{post.id}}" class="text-muted"> {{post.commentcount}} comments </a>
             </div>
           </div>
           <!-- Reactions -->
@@ -113,7 +159,7 @@
     
           <!-- Input -->
           <div class="d-flex mb-3">
-            <a href="#">
+            <a href="/viewprofile/{{ comment.user }}">
               <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
                 alt="Avatar" style="height: 40px" />
             </a>
@@ -141,7 +187,7 @@
       </a>
       <div>
         <div class="bg-light rounded-3 px-3 py-1">
-          <a href="#" class="text-dark mb-0">
+          <a href="/viewprofile/{{ comment.user }}" class="text-dark mb-0">
             <strong> {{ comment.user }}</strong>
           </a>
           <a href="#" class="text-muted d-block">
@@ -166,47 +212,94 @@
         {% endif %}
 
         </strong></a>
-        <a href="#" class="text-muted small me-2"><strong>Reply</strong></a>
+
+        <a href="#" class="text-muted small me-2"><strong>
+
+
+          {% if comment.user == user %}
+          <a href="{% url 'delete_comment' comment.pk %}"> Delete </a>
+                 
+          {% endif %}
+
+
+        </strong></a>
       </div>
     </div>
     {% endfor %}
+  </div>
 
     {% endfor %}
 
-  </div>
-</div>
-</div>
-</div>
-</div>
+                        </div>
+                        <!-- END OF POSTS -->
+                    </div>
+                    <div class="col-4">
+                        <div class="d-flex flex-row align-items-center">
+                           
+                            <div class="profile-info ml-3">
+                                <span class="profile-info-username">People</span>
+                                <span class="profile-info-name">you may know</span>
+                            </div>
+                        </div>
 
+                        <div class="mt-4">
+                            <div class="d-flex flex-row justify-content-between">
+                                <small class="text-muted font-weight-normal">Suggestions For You</small>
+                                <small>See All</small>
+                            </div>
+                            <div>
+                                   <style>
+                                    .rounded-circle {
+                                      width: 50px;
+                                      height: 50px;
+                                      border-radius: 50%;
+                                  }
+                                   </style>  
+                      
+                                  <div class="col-13">
+                                    <div class="list-group" id="list-tab" role="tablist">
+                                      <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">
+                                        {% for user in recommendations %}
+                                          <img src="https://www.gravatar.com/avatar/{{ user.email}}" alt="" class="avatar rounded-circle"> 
+                                          <p class="list-group">{{ user.username }}</p>
+                                            {% if user in request.user.following.all %}
+                                            <a href="{% url 'follow' username=user.username %}" class="btn btn-primary mb-2">Follow</a>
+                                            {% else %}
+                                            <a href="{% url 'follow' username=user.username %}" class="btn btn-primary mb-2">UnFollow</a>
+                                            {% endif %}
+                                        {% endfor %}
 
+                                      </a>
+                                    </div>
+                                  </div>
+                                </div>
+                                  
+                                
 
-
-
-  <div class="col-4 justify-content-end">
-
-        <div class="p-4 pt-5 border border-solid mt-5 ">
-          <h5>Add New Post</h5>
-          
+                                  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+ 
+<!-- end of post create div -->
+      <div class="card  ml-2 mr-2 mt-2 mb-2 border">
+    
         
-            <form method="post" action="{% url 'newsfeed' %}" enctype="multipart/form-data">
-              {% csrf_token %}
-              {{ addpostform.as_p }}
-              <input type="hidden" name="form_type" value="post">
-              <button type="submit" class="btn btn-primary">Add Post</button>
-            </form>
-        </div> 
+
+
 
 
       </div>
 
 
 
+</div>
 
-    
-      
-    </div>   </div>
-</section>
 {% endblock  %}
 
 {% block script %}

@@ -2,6 +2,8 @@
 {% extends 'theme.html' %}
 {% block content %}
 {% load static %}
+<section class="blog_section layout_padding">
+
 <head>
     <title>Feed</title>
     <!-- Include Bootstrap CSS -->
@@ -16,25 +18,24 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   </head>
    
-    <div class="container-fluid   mt-2 ml-1 mr-1">
-      <div class="row">
-        <div class="col-8">
-    <!-- Page Content  -->
+  <div class="container-fluid d-flex">
+    <div class="row">
+      <div class="col-8 pl-2 sm-5">
       <h2 class="mb-1 mt-2 text-center"> <strong> Newsfeed </strong></h2>
 
       {% for post in posts %}
-      <div class="card pl-2 mb" style="max-width: 70rem">
+      <div class="card pl-1" style="max-width: 80rem">
         
       
         <div class="card-body">
           <!-- Data -->
           <div class="d-flex mb-3">
-            <a href="#">
+            <a href="/viewprofile/{{ post.user }}">
               <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
                 alt="Avatar" style="height: 40px" />
             </a>
             <div>
-              <a href="#" class="text-dark mb-0">
+              <a href="/viewprofile/{{ post.user }}" class="text-dark mb-0">
                 <strong>{{post.user}}</strong>
               </a>
               <a href="#" class="text-muted d-block" style="margin-top: -6px">
@@ -50,10 +51,10 @@
           </div>
         </div>
         <!-- Media -->
-        <div class="bg-image hover-overlay ripple rounded-0" data-mdb-ripple-color="light">
+        <div class="bg-image hover-overlay ripple rounded-1" data-mdb-ripple-color="light">
           <a href="/post/{{post.id}}">
 
-          <img src='{{ post.image.url }} ' class="w-50 pl-2 " />
+          <img src='{{ post.image.url }} ' class="h-100 w-100  pl-3 pr-3 " />
             <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
           </a>
         </div>
@@ -70,7 +71,7 @@
               </a>
             </div>
             <div>
-              <a href="#" class="text-muted"> {{post.commentcount}} comments </a>
+              <a href="/post/{{post.id}}" class="text-muted"> {{post.commentcount}} comments </a>
             </div>
           </div>
           <!-- Reactions -->
@@ -112,7 +113,7 @@
     
           <!-- Input -->
           <div class="d-flex mb-3">
-            <a href="#">
+            <a href="/viewprofile/{{ comment.user }}">
               <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" class="border rounded-circle me-2"
                 alt="Avatar" style="height: 40px" />
             </a>
@@ -140,7 +141,7 @@
       </a>
       <div>
         <div class="bg-light rounded-3 px-3 py-1">
-          <a href="#" class="text-dark mb-0">
+          <a href="/viewprofile/{{ comment.user }}" class="text-dark mb-0">
             <strong> {{ comment.user }}</strong>
           </a>
           <a href="#" class="text-muted d-block">
@@ -165,85 +166,79 @@
         {% endif %}
 
         </strong></a>
-        <a href="#" class="text-muted small me-2"><strong>Reply</strong></a>
+
+        <a href="#" class="text-muted small me-2"><strong>
+
+
+          {% if comment.user == user %}
+          <a href="{% url 'delete_comment' comment.pk %}"> Delete </a>
+                 
+          {% endif %}
+
+
+        </strong></a>
       </div>
-    </div> 
+    </div>
     {% endfor %}
   </div>
 
     {% endfor %}
 
 </div>
+</div>
+</div>
+</div>
 
 
 
 
 
+  <div class="col-4 justify-content-end">
 
-
-<div class="col-4 border border-solid mb-2 ml-1 mt-1 justify-content-end">
-
-      <div class="p-4 pt-5 border border-solid mt-5 ">
-        <h5>Add New Post</h5>
+        <div class="p-4 pt-5 border border-solid mt-5 ">
+          <h5>Add New Post</h5>
+          
         
+            <form method="post" action="{% url 'newsfeed' %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ addpostform.as_p }}
+              <input type="hidden" name="form_type" value="post">
+              <button type="submit" class="btn btn-primary">Add Post</button>
+            </form>
+        </div> 
+
+
+      </div>
+      <div class="col-4 justify-content-end">
+
+
+      {% for user in users %}
+      <div class="recommendation">
+          <img src="https://mdbcdn.b-cdn.net/img/new/avatars/18.webp" alt="{{ user.username }}" class="recommendation-pic ">
+          <p>{{ user.username }}</p>
+          {% if user.id in following %}
+          <a href="{% url 'follow' username=user.username %}" class="btn btn-outline-primary form-control " name="follow" value="unfollow" data-mdb-ripple-color="dark"
+          style="z-index: 1;">Unfollow</button>
+      {% else %}
+          <a href="{% url 'follow' username=user.username %}" class="btn btn-outline-primary form-control" name="follow" value="follow" data-mdb-ripple-color="dark"
+          style="z-index: 1;">Follow</button>
+      {% endif %}
+        </div>
+  {% endfor %}
+    </div>
+    
       
-          <form method="post" action="{% url 'newsfeed' %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ addpostform.as_p }}
-            <input type="hidden" name="form_type" value="post">
-            <button type="submit" class="btn btn-primary form-control">Add Post</button>
-          </form>
-      </div> 
-    </div> 
-
-
-
-
-
-
-
-    <!-- Include Bootstrap JavaScript -->
-    <script>
-    function search() {
-      // Get the search term
-      var query = document.getElementById('search-input').value;
-    
-      // Show or hide the search results container
-      if (query) {
-        document.getElementById('search-results-container').style.display = 'block';
-      } else {
-        document.getElementById('search-results-container').style.display = 'none';
-      }
-    
-      // Send an AJAX request to the server
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', '/search?q=' + query, true);
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          // Update the search results
-          var results = JSON.parse(xhr.responseText).results;
-          var html = '';
-          for (var i = 0; i < results.length; i++) {
-            html += '<li><a href="' + results[i].profile_url + '">' + results[i].username + '</a></li>';
-          }
-          document.getElementById('search-results').innerHTML = html;
-        }
-      };
-      xhr.send();
-    }
-    
-    // Add an event listener to the search input
-    document.getElementById('search-input').addEventListener('input', search);
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/popper.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYU
-  
-    
-  </div> 
-</div> 
-
+    </div>   </div>
+</section>
 {% endblock  %}
+
+{% block script %}
+    
+    <!-- Include Bootstrap JavaScript -->
+    
+      <script src="{% static 'js/jquery.min.js' %}"></script>
+      <script src="{% static 'js/popper.js' %}"></script>
+      <script src="{% static 'js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'js/main.js' %}"></script>
+      
+{% endblock script %}
