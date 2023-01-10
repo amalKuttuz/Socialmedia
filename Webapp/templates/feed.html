@@ -260,8 +260,8 @@
                                     <div class="list-group" id="list-tab" role="tablist">
                                       <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">
                                         {% for user in recommendations %}
-                                          <img src="https://www.gravatar.com/avatar/{{ user.email}}" alt="" class="avatar rounded-circle"> 
-                                          <p class="list-group">{{ user.username }}</p>
+                                          <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" alt="" class="avatar rounded-circle"> 
+                                          {{ user.username }}
                                             {% if user in request.user.following.all %}
                                             <a href="{% url 'follow' username=user.username %}" class="btn btn-primary mb-2">Follow</a>
                                             {% else %}
@@ -273,6 +273,8 @@
                                     </div>
                                   </div>
                                 </div>
+                              </div>
+                            </div>
                                   
                                 
 

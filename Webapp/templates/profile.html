@@ -30,8 +30,47 @@
                 
               </div>
               <div class="p-4 text-black" style="background-color: #f8f9fa;">
-                      
-                <div class="d-flex justify-content-center text-center py-1">
+                     
+                
+                <button class="btn btn-primary mt-3 form-control" id="update-btn">Update Profile</button>
+
+
+                <div class="modal" tabindex="-1" role="dialog" id="update-alert">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Update Profile</h5>
+                        <button type="button" class="close form-control" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                    <div class="container">
+      
+                  <form method="post" action="{% url 'profile' %}">
+                    {% csrf_token %}
+                    {{ user_form.as_p }}
+                    {{ profile_form.as_p }}
+                  </div>
+      
+                <div class="modal-footer">
+      
+                  <input type="submit" value="Submit" class="btn btn-primary pb-2 form-control">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+                <div class="d-flex justify-content-center text-center py-1 mt-1">
                   <div>
                     <p class="mb-1 h5">{{posts_count}}</p>
                     <p class="small text-muted mb-0">Posts</p>
@@ -97,31 +136,7 @@
                                     <p>{{userobjects.last_login}}</p>
                                     {% endfor %}
 
-                                    {% comment %} <div class="modal" tabindex="-1" role="dialog" id="update-alert">
-                                      <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title">Update Profile</h5>
-                                            <button type="button" class="close form-control" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                        <div class="container">
-                          
-                                      <form method="post" action="{% url 'profile' %}">
-                                        {% csrf_token %}
-                                        {{ user_form.as_p }}
-                                        {{ profile_form.as_p }}
-                                      </div>
-                          
-                                    <div class="modal-footer">
-                          
-                                      <input type="submit" value="Submit" class="btn btn-primary pb-2 form-control">
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div> {% endcomment %}
+                                   
                   </div>
                 </div>
               </div>
@@ -129,8 +144,17 @@
 
                 </div>
             <div class="container  mt-5">
+              
+               
+
+
+
+
+
               <p class="lead fw-normal mb-0">Recent Posts</p>
               <p class="mb-0"><a href="#!" class="text-muted">
+
+                
                   
               </a></p>                
               {% for post in posts_feed %}
@@ -333,7 +357,25 @@
                     {% endblock %}
 {% block script %}
     
-    
+<script>
+  var updateBtn = document.getElementById("update-btn");
+  var updateAlert = document.getElementById("update-alert");
+  var closeBtn = updateAlert.querySelector(".close");
+  updateBtn.addEventListener("click", function() {
+    updateAlert.classList.add("show");
+    updateAlert.style.display = "block";
+  });
+  closeBtn.addEventListener("click", function() {
+    updateAlert.classList.remove("show");
+    updateAlert.style.display = "none";
+  });
+  updateAlert.addEventListener("click", function(e) {
+    if (e.target.classList.contains("modal")) {
+      updateAlert.classList.remove("show");
+      updateAlert.style.display = "none";
+    }
+  });
+</script>
 {% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script> {% endcomment %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
 
