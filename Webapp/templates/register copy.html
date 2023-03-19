@@ -1,0 +1,77 @@
+{% extends 'theme.html' %}
+{% block content %}
+{% load static %}
+{% load bootstrap4 %}
+
+<head>
+    <title>Home</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+  <div class="container">
+  {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+            {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="container  mt-5">
+          
+            <div class="row justify-content-center">
+                
+              <div class="col-8 border">
+                <div class="card-header text-center">
+                    <h4>Register here</h4>
+                  </div>
+                
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        {% if  form.errors  %}
+        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+            {{ form.password2.errors }}
+            {{ form.username.errors }}
+            {{ form.first_name.errors }}
+            {{ form.email.errors }}
+            {{ form.last_name.errors }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        {% endif %}
+
+
+        {% bootstrap_field form.username %}
+        {% bootstrap_field form.first_name %}
+        {% bootstrap_field form.last_name %}
+        {% bootstrap_field form.password1 %}
+        {% bootstrap_field form.password2 %}
+        {% bootstrap_field form.email %}
+
+
+
+
+
+
+        <button class="btn btn-primary form-control" type="submit">Register</button>
+        <div class=' mt-1 mb-4 justify-content-center'> Already have account? <a href="{% url 'login' %}">Login here</a>
+
+    </div>
+    </form>
+    </div>
+
+</div>  
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/popper.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script><script>
+  
+{% endblock script %}

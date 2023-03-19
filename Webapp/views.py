@@ -22,6 +22,7 @@ from api.models import *
 # View for login .
 @login_required
 def login(self, request):
+      #Accept and authenticate login form if request is post
     if request.method == 'POST':
         form=LoginForm(request.POST)
         if form.is_valid():
@@ -35,7 +36,7 @@ def login(self, request):
                 messages.error("Try again")
                 return redirect("signin")
     else:
-        form=LoginForm()
+        form=LoginForm() #Send login form if request is not post
         return render(request,'login.html',{"form":form})
 
 # View for signin .
@@ -57,7 +58,7 @@ def signin(self, request):
             messages.error("Try again")
             return redirect("signin")
     else:
-        form=UserRegistrationForm()
+        form=UserRegistrationForm()  #Send Reg form if request is not post
         return render(request,'signin.html',{"form":form})
 
 #View for index page
@@ -75,33 +76,33 @@ def profile(request):
       post.commentcount=Comments.objects.filter(post=post).count
       post.comment_form = Commentform()
       post.postdeleteform = DeleteForm(initial={'post_id': post.id}) 
-    following = request.user.profile.following.all()
-    following_count = following.count()
-    posts_count =Posts.objects.filter(user=request.user).count
-    if request.method == 'POST':
-      # Get the forms from the request
-      user_form = UserForm(request.POST, instance=request.user)
-      profile_form = ProfileForm(request.POST, instance=request.user.profile)
+      following = request.user.profile.following.all()
+      following_count = following.count()
+      posts_count =Posts.objects.filter(user=request.user).count
+      if request.method == 'POST':
+        # Get the forms from the request
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
 
-      # Save the forms if they are valid
-      if user_form.is_valid() and profile_form.is_valid():
-        user_form.save()
-        profile_form.save()
-        
-        # Update the session authentication hash to prevent session hijacking
-        update_session_auth_hash(request, user_form.instance)
-        
-        return redirect('profile')
-    else:
-      # Render the forms if the request method is not POST
-      user_form = UserForm(instance=request.user)
-      profile_form = ProfileForm(instance=request.user.profile)
-      users=User.objects.filter(username=request.user)
-      profileobjects=Profile.objects.filter(user_id=request.user)
-    context = {
-      'user_form': user_form,
-      'profile_form': profile_form,'profileobjects':profileobjects,'users':users,'following_count':following_count,'posts_count':posts_count,'posts_feed':posts_feed
-    }
+        # Save the forms if they are valid
+        if user_form.is_valid() and profile_form.is_valid():
+          user_form.save()
+          profile_form.save()
+          
+          # Update the session authentication hash to prevent session hijacking
+          update_session_auth_hash(request, user_form.instance)
+          
+          return redirect('profile')
+      else:
+        # Render the forms if the request method is not POST
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+        users=User.objects.filter(username=request.user)
+        profileobjects=Profile.objects.filter(user_id=request.user)
+      context = {
+        'user_form': user_form,
+        'profile_form': profile_form,'profileobjects':profileobjects,'users':users,'following_count':following_count,'posts_count':posts_count,'posts_feed':posts_feed
+      }
     return render(request, 'profile.html', context)
 
 
@@ -116,8 +117,6 @@ def newsfeed(request):
         # Get the random users
   users = User.objects.order_by('?')[:5]
 
-
-  
   # Get the comments for each post
   for post in posts:
     post.comments = Comments.objects.filter(post=post).order_by('-created_date')[:3]
